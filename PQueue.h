@@ -17,16 +17,23 @@ public:
 		return last == caparcity;
 	}
 	void insertWithPriority(int data, int priority) {
+		pair<int, int> tmp = { priority, data };
 		last++;
 		if (isFull()) {
 			cout << "Queue is full" << endl;
 			resize();
 		}
-		queue[last].first = priority;
-		queue[last].second = data;
+		int index = getPos(priority);
+		if (isEmpty() || index == -1) {
+			queue[last] = tmp;
+		}
+		for (int i = last; i > index; i--)
+		{
+			queue[i] = queue[i - 1];
+		}
+		queue[index] = tmp;
 	}
 	void pullHighestPriorityElement() {
-		if (last > 0)prioritySort();
 		first++;
 		if (first == caparcity)
 		{
@@ -35,7 +42,6 @@ public:
 		}
 	}
 	void show() {
-		if (last > 0)prioritySort();
 		for (size_t i = first; i <= last; i++)
 		{
 			cout << "Priority: "<< queue[i].first << "  Value: " << queue[i].second << "\n";
@@ -43,7 +49,6 @@ public:
 		cout << endl;
 	}
 	pair<int,int> peek() {
-		if (last > 0)prioritySort();
 		return queue[first];
 	}
 
@@ -65,16 +70,25 @@ private:
 		delete[] queue;
 		queue = tmp;
 	}
-	void prioritySort() {
-		for (size_t i = first; i < last+1; i++)
+	//void prioritySort() {
+	//	for (size_t i = first; i < last+1; i++)
+	//	{
+	//		for (size_t j = first; j < last+1 - i - 1; j++)
+	//		{
+	//			if (queue[j].first > queue[j + 1].first) {
+	//				swap(queue[j], queue[j + 1]);
+	//			}
+	//		}
+	//	}
+	//}
+	int getPos(int priority) {
+		for (size_t i = first; i < last + 1; i++)
 		{
-			for (size_t j = first; j < last+1 - i - 1; j++)
-			{
-				if (queue[j].first > queue[j + 1].first) {
-					swap(queue[j], queue[j + 1]);
-				}
+			if (priority > queue[i].first) {
+				return i;
 			}
 		}
+		return -1;
 	}
 };
 
